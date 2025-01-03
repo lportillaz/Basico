@@ -41,6 +41,14 @@ namespace proy001
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Error de SQL al consultar las empresas: " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Operación inválida al consultar las empresas: " + ex.Message);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Error al consultar las empresas: " + ex.Message);
@@ -49,8 +57,52 @@ namespace proy001
             return empresas;
         }
 
+        public void leerTabla()
+        {
+            try
+            {
+                using (SqlConnection conn = ClaseDao.BDConectarSql())
+                {
+                    if (conn != null)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("SELECT EMP_CODIGO, EMP_DESCRI, EMP_ESTADO FROM EMPRESA", conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    Console.WriteLine(reader.GetString(0) + " " + reader.GetString(1) + " " + reader.GetString(2));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No se pudo establecer la conexión con la base de datos.");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Error de SQL al leer la tabla: " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Operación inválida al leer la tabla: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al leer la tabla: " + ex.Message);
+            }
+        }
+
         public void CreaEmpresa(ModEmpresa pEmpresa)
         {
+            if (pEmpresa == null)
+            {
+                throw new ArgumentNullException(nameof(pEmpresa));
+            }
+
             try
             {
                 using (SqlConnection conn = ClaseDao.BDConectarSql())
@@ -71,14 +123,27 @@ namespace proy001
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Error de SQL al crear la empresa: " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Operación inválida al crear la empresa: " + ex.Message);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Error al crear la empresa: " + ex.Message);
-            }   
+            }
         }
 
         public void EliminaEmpresa(string pCodigo)
         {
+            if (string.IsNullOrWhiteSpace(pCodigo))
+            {
+                throw new ArgumentException("El código de la empresa no puede ser nulo o vacío.", nameof(pCodigo));
+            }
+
             try
             {
                 using (SqlConnection conn = ClaseDao.BDConectarSql())
@@ -96,6 +161,14 @@ namespace proy001
                         Console.WriteLine("No se pudo establecer la conexión con la base de datos.");
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Error de SQL al eliminar la empresa: " + ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Operación inválida al eliminar la empresa: " + ex.Message);
             }
             catch (Exception ex)
             {
