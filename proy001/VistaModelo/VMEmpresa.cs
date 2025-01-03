@@ -1,7 +1,6 @@
 using Microsoft.Data.SqlClient;
 using proy001.clases;
 using proy001.Modelo;
-using System.Collections.Generic;
 
 namespace proy001
 {
@@ -76,6 +75,32 @@ namespace proy001
             {
                 Console.WriteLine("Error al crear la empresa: " + ex.Message);
             }   
+        }
+
+        public void EliminaEmpresa(string pCodigo)
+        {
+            try
+            {
+                using (SqlConnection conn = ClaseDao.BDConectarSql())
+                {
+                    if (conn != null)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("DELETE FROM EMPRESA WHERE EMP_CODIGO = @EMP_CODIGO", conn))
+                        {
+                            cmd.Parameters.AddWithValue("@EMP_CODIGO", pCodigo);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No se pudo establecer la conexión con la base de datos.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al eliminar la empresa: " + ex.Message);
+            }
         }
     }
 }
